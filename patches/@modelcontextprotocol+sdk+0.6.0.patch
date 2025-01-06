@@ -1,0 +1,15 @@
+diff --git a/package.json b/package.json
+index 123456..789012 100644
+--- a/package.json
++++ b/package.json
+@@ -4,6 +4,12 @@
+   "type": "module",
++  "exports": {
++    ".": "./dist/index.js",
++    "./server": "./dist/server/index.js",
++    "./server/stdio": "./dist/server/stdio.js",
++    "./types": "./dist/types.js"
++  },
+   "files": [
+     "dist"
+   ]

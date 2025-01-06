@@ -21,6 +21,8 @@ export interface TokenOrder {
   type: 'tokenProfile' | 'communityTakeover' | 'tokenAd' | 'trendingBarAd';
   status: 'processing' | 'cancelled' | 'on-hold' | 'approved' | 'rejected';
   paymentTimestamp: number;
+  chainId?: string;
+  tokenAddress?: string;
 }
 
 export interface Token {
