@@ -66,7 +66,8 @@ export interface Pair {
 
 export interface DexResponse {
   schemaVersion: string;
-  pairs: Pair[];
+  pairs: Pair[] | null;
+  pair?: Pair | null; // Some endpoints return single pair
 }
 
 export interface ApiError {

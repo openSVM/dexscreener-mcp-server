@@ -1,12 +1,12 @@
 import type { Request, Response } from '@modelcontextprotocol/sdk';
 
 export interface ListToolsRequest extends Request {
-  method: 'list_tools';
+  method: 'tools/list';
   params: Record<string, never>;
 }
 
 export interface CallToolRequest extends Request {
-  method: 'call_tool';
+  method: 'tools/call';
   params: {
     name: string;
     arguments: Record<string, unknown>;

@@ -134,9 +134,10 @@ async function runTests() {
 
   // Test getPairsByChainAndAddress
   await runTest('getPairsByChainAndAddress', async () => {
+    // Test with valid pair
     const response = await service.getPairsByChainAndAddress({
       chainId: 'solana',
-      pairId: 'HxFLKUAmAMLz1jtT3hbvCMELwH5H9tpM2QugP8sKyfhc' // SOL-USDC pair
+      pairId: '8slbnzoa1cfnvmjlpfp98zlanfsycfapfjkmbixnlwxj' // Active Raydium SOL-USDC pair
     });
     console.log('📊 Full Response:', JSON.stringify(response, null, 2));
     
@@ -146,8 +147,35 @@ async function runTests() {
     if (!validateDexResponse(response)) {
       throw new Error('Invalid DEX response structure');
     }
-    if (!response.pairs) {
-      console.warn('⚠️ Warning: pairs property is null');
+
+    // Validate response structure
+    if (response.pairs === null && response.pair === null) {
+      throw new Error('Both pairs and pair are null');
+    }
+
+    // If we have pairs data, validate first pair
+    if (response.pairs && response.pairs.length > 0) {
+      const pair = response.pairs[0];
+      if (!pair.baseToken || !pair.quoteToken) {
+        throw new Error('Invalid pair token data');
+      }
+      if (typeof pair.priceUsd !== 'string') {
+        throw new Error('Invalid price data');
+      }
+    }
+
+    // Test with invalid pair
+    try {
+      await service.getPairsByChainAndAddress({
+        chainId: 'invalid-chain',
+        pairId: 'invalid-pair'
+      });
+      throw new Error('Expected error for invalid pair');
+    } catch (error) {
+      if (!(error instanceof Error)) {
+        throw new Error('Expected error instance');
+      }
+      console.log('✅ Successfully caught invalid pair error');
     }
   });
 
@@ -211,24 +239,46 @@ async function runTests() {
     }
   });
 
-  // Test error handling
+  // Test error handling with various scenarios
   await runTest('errorHandling', async () => {
+    // Test invalid chain
     try {
-      console.log('🔍 Testing with invalid chain/pair...');
       await service.getPairsByChainAndAddress({
-        chainId: 'invalid',
-        pairId: 'invalid'
+        chainId: 'invalid-chain',
+        pairId: '8slbnzoa1cfnvmjlpfp98zlanfsycfapfjkmbixnlwxj'
       });
-      throw new Error('Expected error for invalid chain/pair');
+      throw new Error('Expected error for invalid chain');
     } catch (error) {
       if (!(error instanceof Error)) {
         throw new Error('Expected error instance');
       }
-      console.log('✅ Successfully caught error:', {
-        name: error.name,
-        message: error.message
+      console.log('✅ Successfully caught invalid chain error');
+    }
+
+    // Test invalid token address
+    try {
+      await service.getPairsByTokenAddresses({
+        tokenAddresses: 'invalid-token'
       });
-      // Success - we expected an error
+      throw new Error('Expected error for invalid token');
+    } catch (error) {
+      if (!(error instanceof Error)) {
+        throw new Error('Expected error instance');
+      }
+      console.log('✅ Successfully caught invalid token error');
+    }
+
+    // Test empty search query
+    try {
+      await service.searchPairs({
+        query: ''
+      });
+      throw new Error('Expected error for empty search');
+    } catch (error) {
+      if (!(error instanceof Error)) {
+        throw new Error('Expected error instance');
+      }
+      console.log('✅ Successfully caught empty search error');
     }
   });
 }

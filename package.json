@@ -16,7 +16,7 @@
     "prepare": "npm run build",
     "watch": "tsc --watch",
     "inspector": "npx @modelcontextprotocol/inspector build/index.js",
-    "test": "node --loader ts-node/esm --experimental-specifier-resolution=node src/tests/dexscreener.test.ts",
+    "test": "node --no-warnings --loader ts-node/esm --experimental-specifier-resolution=node src/tests/dexscreener.test.ts",
     "test:watch": "nodemon --exec 'npm test' --ext ts",
     "start": "node build/index.js",
     "dev": "nodemon --exec 'npm run build && npm start' --ext ts",
@@ -24,7 +24,8 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.1.0",
-    "axios": "^1.7.9"
+    "axios": "^1.7.9",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@types/node": "^22.10.5",

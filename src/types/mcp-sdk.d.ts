@@ -3,12 +3,15 @@ declare module '@modelcontextprotocol/sdk/server/index' {
     constructor(config: {
       name: string;
       version: string;
-      capabilities?: { tools: Record<string, never> };
+      capabilities?: { 
+        tools?: Record<string, unknown>;
+        resources?: Record<string, unknown>;
+      };
     });
 
-    setRequestHandler(
-      method: string,
-      handler: (request: any) => Promise<any>
+    setRequestHandler<T extends Request = Request, R extends Response = Response>(
+      method: T | { method: string },
+      handler: (request: T) => Promise<R>
     ): void;
 
     connect(transport: any): Promise<void>;

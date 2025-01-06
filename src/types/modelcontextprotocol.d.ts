@@ -20,12 +20,17 @@ declare module '@modelcontextprotocol/sdk' {
   export class Server {
     constructor(
       info: { name: string; version: string },
-      config: { capabilities: { tools: Record<string, never> } }
+      config: { 
+        capabilities?: { 
+          tools?: Record<string, unknown>;
+          resources?: Record<string, unknown>;
+        } 
+      }
     );
 
-    setRequestHandler<T extends Request>(
-      method: string,
-      handler: (request: T) => Promise<Response>
+    setRequestHandler<T extends Request = Request, R extends Response = Response>(
+      method: T | { method: string },
+      handler: (request: T) => Promise<R>
     ): void;
 
     connect(transport: any): Promise<void>;
